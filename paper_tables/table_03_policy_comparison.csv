@@ -1,4 +1,4 @@
-Policy,Model,Feasible?,t_f [s],max_t(H-H_max),Effort
+Policy,Model,Feasible?,t_f [s],max_t(H-H_con),Effort
 Maximum charging rate,constant D,No,47.959477333360674,0.006100388178503301,Low
 Best feasible constant rate,constant D,Yes,56.421290788226806,9.948409725665797e-07,Low
 Direct PSO,constant D,Yes,57.75872000000001,2.7627972561811154e-07,High

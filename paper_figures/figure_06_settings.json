@@ -34,7 +34,7 @@
     "integration_scheme": "semi_implicit"
   },
   "operating_condition": {
-    "maximum_charging_C_rate": 60.0,
+    "maximum_charging_input": 60.0,
     "target_average_concentration": 0.60,
     "constraint_fraction_of_hmax": 0.8888888888888888
   },

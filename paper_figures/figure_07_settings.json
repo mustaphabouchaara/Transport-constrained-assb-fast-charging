@@ -18,7 +18,7 @@
   },
   "operating_conditions": {
     "reference_diffusivity_m2_s": 7e-15,
-    "maximum_charging_C_rate": 60.0,
+    "maximum_charging_input": 60.0,
     "target_average_concentration": 0.6,
     "constraint_fraction_of_linear_full_current_peak": 0.8888888888888888,
     "beta_values": [0.0, 0.5, 1.0]

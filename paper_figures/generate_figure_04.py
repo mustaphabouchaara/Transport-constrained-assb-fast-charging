@@ -11,8 +11,8 @@ The health functional is evaluated directly from IGA coefficients,
     H(t) = c_avg(t) - c_s(t),
 
 where ``c_avg`` is the quadrature-consistent spatial average and ``c_s`` is the
-concentration at the flux boundary. The electrical input is a C-rate, so the
-applied current is ``capacity_Ah * C_rate`` in amperes. No sampled concentration profile is used
+concentration at the flux boundary. The dimensionless control is denoted by
+``j(t)``; its physical current is ``capacity_Ah * j(t)`` in amperes. No sampled concentration profile is used
 to evaluate the health functional.
 
 Run from the repository root, for example::
@@ -171,7 +171,7 @@ def validate_config(config: dict[str, Any]) -> None:
     if not isinstance(time.get("include_final_partial_step"), bool):
         raise ConfigurationError("include_final_partial_step must be true or false.")
 
-    _positive(control, "maximum_charging_C_rate")
+    _positive(control, "maximum_charging_input")
     _positive(control, "health_upper_bound")
     temporal_degree = _positive_integer(control, "temporal_spline_degree")
     if temporal_degree < 1:
@@ -513,7 +513,7 @@ def solve_policy(
     """
 
     degree = _positive_integer(control, "temporal_spline_degree")
-    maximum_c_rate = _positive(control, "maximum_charging_C_rate")
+    maximum_input = _positive(control, "maximum_charging_input")
     health_upper_bound = _positive(control, "health_upper_bound")
     phase_one_weight = _positive(control, "phase_one_weight")
     knots = make_open_clamped_knots(control_breakpoints, degree)
@@ -540,7 +540,7 @@ def solve_policy(
     if not unknown:
         raise RuntimeError("No temporal control coefficients are available after switching.")
     coefficients = np.zeros(n_control_basis, dtype=float)
-    coefficients[pre_switch] = maximum_c_rate
+    coefficients[pre_switch] = maximum_input
     boundary_indices = np.arange(switch_index, time.size)
     phase_one_indices = np.arange(0, switch_index + 1)
 
@@ -553,7 +553,7 @@ def solve_policy(
     health_matrix = response[np.ix_(boundary_indices, unknown)]
     health_rhs = health_upper_bound - known_health
     phase_one_matrix = temporal_basis[np.ix_(phase_one_indices, unknown)]
-    phase_one_rhs = maximum_c_rate - known_current
+    phase_one_rhs = maximum_input - known_current
     system_matrix = np.vstack((health_matrix, phase_one_weight * phase_one_matrix))
     system_rhs = np.concatenate((health_rhs, phase_one_weight * phase_one_rhs))
     # Column equilibration leaves the weighted least-squares objective
@@ -571,17 +571,17 @@ def solve_policy(
 
     current = temporal_basis @ coefficients
     health = response @ coefficients
-    current_tolerance = 2.0e-9 * max(1.0, maximum_c_rate)
-    if current.min() < -current_tolerance or current.max() > maximum_c_rate + current_tolerance:
+    current_tolerance = 2.0e-9 * max(1.0, maximum_input)
+    if current.min() < -current_tolerance or current.max() > maximum_input + current_tolerance:
         raise RuntimeError(
             f"{name} policy violates the current bounds: "
-            f"[{current.min():.8g}, {current.max():.8g}] versus [0, {maximum_c_rate:.8g}]."
+            f"[{current.min():.8g}, {current.max():.8g}] versus [0, {maximum_input:.8g}]."
         )
     if not np.all(np.isfinite(health)):
         raise RuntimeError(f"{name} policy produced non-finite health values.")
 
     boundary_residual = health[boundary_indices] - health_upper_bound
-    phase_one_residual = current[phase_one_indices] - maximum_c_rate
+    phase_one_residual = current[phase_one_indices] - maximum_input
     condition_number = math.inf
     if singular_values.size and singular_values[-1] > 0.0:
         condition_number = float(singular_values[0] / singular_values[-1])
@@ -733,9 +733,9 @@ def reproduce(config: dict[str, Any]) -> dict[str, Any]:
         * _positive(model, "reference_diffusivity_m2_s")
         * _positive(model, "maximum_concentration_mol_m3")
     )
-    maximum_c_rate = _positive(control, "maximum_charging_C_rate")
+    maximum_input = _positive(control, "maximum_charging_input")
     health_upper_bound = _positive(control, "health_upper_bound")
-    full_current = np.full(time_nd.size, maximum_c_rate, dtype=float)
+    full_current = np.full(time_nd.size, maximum_input, dtype=float)
     full_current_health = simulate_current(
         full_current,
         time_nd,

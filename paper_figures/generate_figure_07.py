@@ -14,8 +14,8 @@ maximal-feasible feedback law for the semi-implicit update.  It does not
 claim that every nonlinear case stays on the boundary after first contact:
 when full current becomes feasible again, H can fall below H_con.
 
-The configured input is a C-rate; the physical current used in the
-Faraday-law boundary-flux scale is ``capacity_Ah * C_rate`` in amperes.
+The configured dimensionless control is ``j(t)``; the physical current used
+in the Faraday-law boundary-flux scale is ``capacity_Ah * j(t)`` in amperes.
 
 Run from the repository root:
     python paper_figures/generate_figure_07.py
@@ -69,7 +69,7 @@ class Model:
     faraday: float
     c_initial: float
     d_ref: float
-    j_max_c_rate: float
+    j_max: float
     target_average: float
     dt_nd: float
     horizon_s: float
@@ -122,7 +122,7 @@ def load_config(path: Path) -> dict:
                     "initial_normalized_concentration")),
         (discretization, ("elements", "spline_degree", "gauss_points_per_element",
                           "nonlinear_time_step_nondimensional", "horizon_s")),
-        (operating, ("reference_diffusivity_m2_s", "maximum_charging_C_rate",
+        (operating, ("reference_diffusivity_m2_s", "maximum_charging_input",
                      "target_average_concentration",
                      "constraint_fraction_of_linear_full_current_peak", "beta_values")),
         (output, ("figure_pdf",)),
@@ -196,7 +196,7 @@ def build_model(config: dict) -> Model:
     area = float(physical["electrode_area_m2"])
     maximum_concentration = float(physical["maximum_concentration_mol_m3"])
     faraday = float(physical["faraday_constant_C_mol"])
-    j_max = float(operating["maximum_charging_C_rate"])
+    j_max = float(operating["maximum_charging_input"])
     j_max_nd = j_max * capacity * thickness / (faraday * area * d_ref * maximum_concentration)
     mass_solver = sparse_linalg.splu(csc_matrix(mass))
     linear_zero_step = mass_solver.solve(mass - dt_nd * stiffness)
@@ -204,7 +204,7 @@ def build_model(config: dict) -> Model:
     return Model(
         capacity=capacity, thickness=thickness, area=area,
         maximum_concentration=maximum_concentration, faraday=faraday,
-        c_initial=initial_concentration, d_ref=d_ref, j_max_c_rate=j_max,
+        c_initial=initial_concentration, d_ref=d_ref, j_max=j_max,
         target_average=float(operating["target_average_concentration"]),
         dt_nd=dt_nd, horizon_s=horizon_s, elements=elements, degree=degree,
         spans=spans, basis=basis, weights=weights, mass=mass, stiffness=stiffness,
@@ -432,15 +432,15 @@ def plot_results(model: Model, results: dict[float, dict], h_max: float, h_con: 
         axis_j.plot(target, 0.0, "o", ms=3, color=color)
 
     axis_h.axhline(h_con, color="black", linestyle="--", linewidth=1.1, label=r"$H_{\rm con}$")
-    axis_j.axhline(model.j_max_c_rate, color="black", linestyle="--", linewidth=1.1)
+    axis_j.axhline(model.j_max, color="black", linestyle="--", linewidth=1.1)
     axis_h.set(xlabel="Time [s]", ylabel=r"$H(t)=\bar c(t)-c_s(t)$")
-    axis_j.set(xlabel="Time [s]", ylabel=r"Charging C-rate $C(t)$")
+    axis_j.set(xlabel="Time [s]", ylabel=r"Charging input $j(t)$")
     axis_h.set_title("(a)", loc="left", fontweight="bold")
     axis_j.set_title("(b)", loc="left", fontweight="bold")
     axis_h.legend(frameon=False, loc="lower left")
     axis_h.text(0.98, 0.07, rf"$\bar c: 1\!\to\!{model.target_average:.1f}$",
                 transform=axis_h.transAxes, ha="right", va="bottom", fontsize=7)
-    axis_j.text(0.98, 0.07, rf"$C_{{\max}}={model.j_max_c_rate:g}$",
+    axis_j.text(0.98, 0.07, rf"$j_{{\max}}={model.j_max:g}$",
                 transform=axis_j.transAxes, ha="right", va="bottom", fontsize=7)
     for axis in (axis_h, axis_j):
         axis.set_xlim(0.0, model.horizon_s)
@@ -502,10 +502,10 @@ def main() -> None:
     )
     arguments = parser.parse_args()
     summary = reproduce(arguments.config)
-    print(f"H_max = {summary['h_max']:.12g} at {summary['h_max_time_s']:.9g} s")
+    print(f"H_peak = {summary['h_max']:.12g} at {summary['h_max_time_s']:.9g} s")
     print(
         f"H_con = {summary['h_con']:.12g} "
-        f"({summary['constraint_fraction']:.6g} H_max)"
+        f"({summary['constraint_fraction']:.6g} H_peak)"
     )
     results = summary["results"]
     for beta, result in results.items():

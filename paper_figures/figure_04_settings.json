@@ -23,7 +23,7 @@
     "include_final_partial_step": true
   },
   "control": {
-    "maximum_charging_C_rate": 60.0,
+    "maximum_charging_input": 60.0,
     "health_upper_bound": 0.1,
     "temporal_spline_degree": 2,
     "coarse_control_elements": 16,

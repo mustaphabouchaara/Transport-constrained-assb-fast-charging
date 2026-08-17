@@ -69,10 +69,10 @@ from the repository root.
 The manuscript intentionally uses distinct numerical studies:
 
 - Figures 4–5 and Table 2: constant `D = 1.76e-15 m^2/s`, `H_max = 0.1`.
-- Figures 6–7: `D_ref = D_DNN(c=1) = 7e-15 m^2/s`; the constraint is recorded
-  in the matching JSON settings.
+- Figures 6–7: `D_ref = D_DNN(c=1) = 7e-15 m^2/s` and
+  `H_con = (8/9) H_peak = 0.0361504485`.
 - Table 3: constant `D = D_DNN(c=1) = 7e-15 m^2/s` and
-  `H_con = 0.85 H_peak` for the full-current constant-D reference.
+  the deliberately stricter `H_con = 0.85 H_peak = 0.0345688663`.
 
 Do not compare raw times across these studies without accounting for their
 different diffusivity and constraint settings.

@@ -239,7 +239,7 @@ T3_J_MAX, T3_HORIZON = 60.0, 120.0
 # the transport constraint is active and the policy comparison is informative.
 T3_H_FRACTION_OF_LINEAR_FULL_CURRENT_PEAK = 0.85
 T3_LINEAR_FULL_CURRENT_PEAK = 0.04066925452335535
-T3_H_MAX = T3_H_FRACTION_OF_LINEAR_FULL_CURRENT_PEAK * T3_LINEAR_FULL_CURRENT_PEAK
+T3_H_CON = T3_H_FRACTION_OF_LINEAR_FULL_CURRENT_PEAK * T3_LINEAR_FULL_CURRENT_PEAK
 T3_NX, T3_PX = 4, 3
 T3_DT_ND = 5e-5
 T3_T0 = T3_LP**2 / T3_D_REF
@@ -315,7 +315,7 @@ def _table3_simulate(current, nonlinear: bool = False):
                 T3_MASS @ c - T3_DT_ND * value * T3_J_SCALE * T3_E0
             )
         h[n] = _table3_health(c)
-    violation = float(np.max(h - T3_H_MAX))
+    violation = float(np.max(h - T3_H_CON))
     return {
         "current": current,
         "H": h,
@@ -327,8 +327,8 @@ def _table3_simulate(current, nonlinear: bool = False):
 
 def _table3_best_constant_current():
     lo, hi = 0.0, T3_J_MAX
-    # Twenty-two bisection iterations resolve the C-rate to better than
-    # 1.5e-5 C, well below the verification tolerance and faster than the
+    # Twenty-two bisection iterations resolve the normalized input to better
+    # than 1.5e-5, well below the verification tolerance and faster than the
     # formerly excessive 28 iterations.
     for _ in range(22):
         mid = 0.5 * (lo + hi)
@@ -353,8 +353,8 @@ def _table3_greedy_linear_policy():
         c1 = T3_LU_LINEAR.solve(T3_MASS @ c - T3_DT_ND * upper * T3_J_SCALE * T3_E0)
         h0, h1 = _table3_health(c0), _table3_health(c1)
         value = upper
-        if h1 > T3_H_MAX and h1 > h0:
-            value = upper * np.clip((T3_H_MAX - h0) / (h1 - h0), 0.0, 1.0)
+        if h1 > T3_H_CON and h1 > h0:
+            value = upper * np.clip((T3_H_CON - h0) / (h1 - h0), 0.0, 1.0)
         c = T3_LU_LINEAR.solve(T3_MASS @ c - T3_DT_ND * value * T3_J_SCALE * T3_E0)
         policy[n] = value
         delivered += value * T3_Q_RATE * T3_DT_S
@@ -422,7 +422,7 @@ def _table3_direct_pso_policy(
         final_time = (crossing + fraction) * T3_DT_S
         before_cutoff = np.arange(T3_N_STEPS)[None, :] <= crossing[:, None]
         peak_health = np.max(np.where(before_cutoff, h, -np.inf), axis=1)
-        violation = np.maximum(peak_health - T3_H_MAX, 0.0)
+        violation = np.maximum(peak_health - T3_H_CON, 0.0)
         shortfall = np.maximum(T3_Q_REQUIRED - cumulative_charge[:, -1], 0.0)
         return final_time + 1e9 * violation**2 + 1e9 * shortfall**2
 
@@ -464,11 +464,11 @@ def _table3_nonlinear_blockwise(block: int = 20):
             T3_MASS @ c - T3_DT_ND * (upper * T3_J_SCALE * T3_E0 + kvec)
         )
         h_zero, h_upper = _table3_health(c_zero), _table3_health(c_upper)
-        if n % block == 0 or _table3_health(c) > T3_H_MAX - 5e-4:
+        if n % block == 0 or _table3_health(c) > T3_H_CON - 5e-4:
             held_value = upper
-            if h_upper > T3_H_MAX and h_upper > h_zero:
+            if h_upper > T3_H_CON and h_upper > h_zero:
                 held_value = upper * np.clip(
-                    (T3_H_MAX - h_zero) / (h_upper - h_zero), 0.0, 1.0
+                    (T3_H_CON - h_zero) / (h_upper - h_zero), 0.0, 1.0
                 )
         value = min(held_value, upper)
         c = T3_LU_MASS.solve(
@@ -504,7 +504,7 @@ def compute_table3() -> pd.DataFrame:
                 "Model": model_name,
                 "Feasible?": "Yes" if result["violation"] <= T3_TOL else "No",
                 "t_f [s]": result["tf"],
-                "max_t(H-H_max)": max(0.0, result["violation"]),
+                "max_t(H-H_con)": max(0.0, result["violation"]),
                 "Effort": effort,
             }
         )

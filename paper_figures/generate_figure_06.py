@@ -28,8 +28,8 @@ admissible current at every step, then replayed unchanged for every
 This is a clean, cache-free reproducer.  It deliberately does not read legacy
 notebooks or ``.npz`` files; its settings are stored alongside the final PDF.
 
-The configuration expresses the applied input as a C-rate. Its physical
-current is ``capacity_Ah * C_rate`` in amperes before Faraday-law scaling.
+The configuration expresses the dimensionless control as ``j(t)``. Its
+physical current is ``capacity_Ah * j(t)`` in amperes before Faraday-law scaling.
 """
 
 from __future__ import annotations
@@ -325,7 +325,7 @@ def run_full_current_reference(
     reference_diffusivity: float,
     dnn_nodes: np.ndarray,
 ) -> tuple[float, float]:
-    r"""Return :math:`H_{\max}` and its time for beta=0 full-current charging."""
+    r"""Return :math:`H_{\mathrm{peak}}` and its time for beta=0 full-current charging."""
     state = model.initial_state.copy()
     peak = health(state, model.average_weights)
     peak_time_s = 0.0
@@ -599,7 +599,7 @@ def main() -> None:
     requested_dt_nd = float(temporal["time_step_nondimensional"])
     horizon_s = float(temporal["horizon_s"])
     time_grid = build_time_grid(horizon_s, t_scale_s, requested_dt_nd)
-    maximum_c_rate = float(operating["maximum_charging_C_rate"])
+    maximum_input = float(operating["maximum_charging_input"])
     if not bool(robustness["common_fixed_policy_for_all_beta"]):
         raise ValueError(
             "This Figure 6 reproducer is defined for one fixed beta=0 policy "
@@ -614,7 +614,7 @@ def main() -> None:
         / (float(physical["faraday_constant_C_mol"]) * float(physical["electrode_area_m2"])
            * reference_diffusivity * float(physical["maximum_concentration_mol_m3"]))
     )
-    maximum_current_nd = maximum_c_rate * current_scale
+    maximum_current_nd = maximum_input * current_scale
     target_average = float(operating["target_average_concentration"])
     constraint_fraction = float(operating["constraint_fraction_of_hmax"])
     if not 0.0 < constraint_fraction < 1.0:
@@ -652,7 +652,7 @@ def main() -> None:
     print(f"Saved Figure 6 PDF: {figure_path}")
     partial_text = "none" if time_grid.final_partial_step_s is None else f"{time_grid.final_partial_step_s:.9g} s"
     print(
-        f"H_max={h_max:.9g}; H_con={h_constraint:.9g}; "
+        f"H_peak={h_max:.9g}; H_con={h_constraint:.9g}; "
         f"full steps={time_grid.full_step_count}; total steps={time_grid.n_steps}; "
         f"dt={time_grid.full_step_s:.9g} s; final partial step={partial_text}"
     )
