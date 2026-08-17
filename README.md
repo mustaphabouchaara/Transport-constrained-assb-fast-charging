@@ -4,6 +4,8 @@ Reproducibility package for the manuscript **“Transport-Constrained
 Minimum-Time Fast Charging of All-Solid-State Batteries: Mathematical
 Analysis and Structure-Exploiting Computation.”**
 
+Archived submission release: [https://doi.org/10.5281/zenodo.21971555](https://doi.org/10.5281/zenodo.21971555)
+
 The package contains the Python code, parameter files, notebooks, generated
 PDF figures, and CSV tables needed to reproduce the manuscript's numerical
 results. Figure and table numbers below match the manuscript.
@@ -78,5 +80,5 @@ different diffusivity and constraint settings.
 ## License and citation
 
 The code is released under BSD-3-Clause; see `LICENSE`. Citation metadata are
-provided in `CITATION.cff`. Replace its repository placeholder before creating
-the archival release, then add the Zenodo DOI after publication of the deposit.
+provided in `CITATION.cff`. The exact manuscript-submission snapshot is
+archived on Zenodo under DOI `10.5281/zenodo.21971555`.

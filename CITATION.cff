@@ -4,6 +4,7 @@ title: "Reproducibility code for Transport-Constrained Minimum-Time Fast Chargin
 type: software
 version: 1.0.0
 date-released: 2026-08-17
+doi: 10.5281/zenodo.21971555
 authors:
   - family-names: Bouchaara
     given-names: Mustapha
@@ -15,6 +16,7 @@ authors:
     given-names: Ahmed
 license: BSD-3-Clause
 repository-code: "https://github.com/mustaphabouchaara/Transport-constrained-assb-fast-charging"
+url: "https://doi.org/10.5281/zenodo.21971555"
 abstract: >-
   Python implementation and numerical artifacts supporting the manuscript,
   including isogeometric diffusion solvers, temporal B-spline controls,
