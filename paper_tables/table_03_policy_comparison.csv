@@ -1,0 +1,7 @@
+Policy,Model,Feasible?,t_f [s],max_t(H-H_max),Effort
+Maximum charging rate,constant D,No,47.959477333360674,0.006100388178503301,Low
+Best feasible constant rate,constant D,Yes,56.421290788226806,9.948409725665797e-07,Low
+Direct PSO,constant D,Yes,57.75872000000001,2.7627972561811154e-07,High
+Offline-online maximal-feasible,constant D,Yes,55.96745142857144,1.519617764955683e-15,Low online
+Transferred constant-D policy,DNN D(c),No,55.96745142857144,0.026425655765861276,Low
+Nonlinear blockwise correction,DNN D(c),Yes,60.8841142857143,1.6306400674181987e-15,Medium

@@ -1,0 +1,38 @@
+{
+  "figure_id": "figure_07_nonlinear_maximal_feasible",
+  "description": "Comparison of constant and SOC-dependent diffusion under a maximal-feasible health-constrained charging controller.",
+  "physical_parameters": {
+    "capacity_Ah": 1e-05,
+    "electrode_thickness_m": 3.2e-07,
+    "electrode_area_m2": 0.0001,
+    "maximum_concentration_mol_m3": 23300.0,
+    "faraday_constant_C_mol": 96485.0,
+    "initial_normalized_concentration": 1.0
+  },
+  "discretization": {
+    "elements": 8,
+    "spline_degree": 3,
+    "gauss_points_per_element": 4,
+    "nonlinear_time_step_nondimensional": 5e-05,
+    "horizon_s": 65.0
+  },
+  "operating_conditions": {
+    "reference_diffusivity_m2_s": 7e-15,
+    "maximum_charging_C_rate": 60.0,
+    "target_average_concentration": 0.6,
+    "constraint_fraction_of_linear_full_current_peak": 0.8888888888888888,
+    "beta_values": [0.0, 0.5, 1.0]
+  },
+  "dnn_diffusivity": {
+    "nodes": [
+      [0.50, 8.5e-14],
+      [0.80, 2.5e-14],
+      [0.95, 5.0e-16],
+      [1.00, 7.0e-15]
+    ]
+  },
+  "health_definition": "H(t) = integral_0^1 c(x,t) dx - c(0,t)",
+  "output": {
+    "figure_pdf": "paper_figures/figure_07_nonlinear_maximal_feasible.pdf"
+  }
+}

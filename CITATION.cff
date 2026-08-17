@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the archived software release and the associated article."
+title: "Reproducibility code for Transport-Constrained Minimum-Time Fast Charging of All-Solid-State Batteries"
+type: software
+version: 1.0.0
+date-released: 2026-08-17
+authors:
+  - family-names: Bouchaara
+    given-names: Mustapha
+  - family-names: Belfakir
+    given-names: Abdessamad
+  - family-names: Habbal
+    given-names: Abderrahmane
+  - family-names: Ratnani
+    given-names: Ahmed
+license: BSD-3-Clause
+repository-code: "https://github.com/mustaphabouchaara/Transport-constrained-assb-fast-charging"
+abstract: >-
+  Python implementation and numerical artifacts supporting the manuscript,
+  including isogeometric diffusion solvers, temporal B-spline controls,
+  robustness calculations, nonlinear admissibility correction, figures, and
+  policy-comparison tables.
+keywords:
+  - all-solid-state batteries
+  - isogeometric analysis
+  - optimal control
+  - fast charging
+  - B-splines
+  - nonlinear diffusion

@@ -1,0 +1,50 @@
+{
+  "figure": {
+    "number": 6,
+    "identifier": "figure_06_dnn_diffusivity_robustness",
+    "title": "DNN diffusivity robustness"
+  },
+  "physical_parameters": {
+    "capacity_Ah": 1.0e-5,
+    "electrode_thickness_m": 3.2e-7,
+    "electrode_area_m2": 1.0e-4,
+    "maximum_concentration_mol_m3": 2.33e4,
+    "initial_normalized_concentration": 1.0,
+    "faraday_constant_C_mol": 96485.0
+  },
+  "dnn_diffusivity": {
+    "reference_diffusivity_m2_s": 7.0e-15,
+    "nodes": [
+      [0.50, 8.5e-14],
+      [0.80, 2.5e-14],
+      [0.95, 5.0e-16],
+      [1.00, 7.0e-15]
+    ],
+    "beta_values": [0.0, 0.25, 0.50, 0.75, 1.0],
+    "display_beta_values": [0.0, 0.50, 1.0]
+  },
+  "spatial_discretization": {
+    "elements": 8,
+    "spline_degree": 3,
+    "gauss_points_per_element": 4
+  },
+  "time_discretization": {
+    "horizon_s": 65.0,
+    "time_step_nondimensional": 0.00005,
+    "integration_scheme": "semi_implicit"
+  },
+  "operating_condition": {
+    "maximum_charging_C_rate": 60.0,
+    "target_average_concentration": 0.60,
+    "constraint_fraction_of_hmax": 0.8888888888888888
+  },
+  "robustness_assessment": {
+    "reference_beta": 0.0,
+    "policy": "one_step_maximal_feasible",
+    "violation_tolerance": 0.015,
+    "common_fixed_policy_for_all_beta": true
+  },
+  "output": {
+    "figure_pdf": "paper_figures/figure_06_dnn_diffusivity_robustness.pdf"
+  }
+}

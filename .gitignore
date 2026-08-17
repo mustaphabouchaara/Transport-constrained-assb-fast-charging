@@ -1,0 +1,23 @@
+# Python bytecode and local virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.local-only/
+# Empty legacy directory may remain locked by an open editor on Windows.
+archive/
+
+# Jupyter and editor state
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Local execution logs and temporary diagnostics
+*.log
+*.out
+*.err
+
+# Raster exports are intentionally not part of the archival paper package.
+*.png
+*.jpg
+*.jpeg

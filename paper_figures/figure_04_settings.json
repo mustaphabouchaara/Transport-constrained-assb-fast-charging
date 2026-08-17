@@ -1,0 +1,39 @@
+{
+  "figure_id": "04",
+  "title": "Temporal-control-grid refinement for the linear diffusion model",
+  "health_functional": "H(t) = c_avg(t) - c_s(t)",
+  "model": {
+    "capacity_Ah": 1.0e-5,
+    "electrode_thickness_m": 3.2e-7,
+    "electrode_area_m2": 1.0e-4,
+    "maximum_concentration_mol_m3": 2.33e4,
+    "initial_normalized_concentration": 1.0,
+    "faraday_constant_C_mol": 96485.0,
+    "reference_diffusivity_m2_s": 1.76e-15
+  },
+  "spatial_discretization": {
+    "domain_length_normalized": 1.0,
+    "elements": 8,
+    "spline_degree": 3,
+    "gauss_points_per_element": 4
+  },
+  "time_discretization": {
+    "duration_s": 60.0,
+    "time_step_nondimensional": 0.005,
+    "include_final_partial_step": true
+  },
+  "control": {
+    "maximum_charging_C_rate": 60.0,
+    "health_upper_bound": 0.1,
+    "temporal_spline_degree": 2,
+    "coarse_control_elements": 16,
+    "phase_one_weight": 10000.0,
+    "refined_left_breakpoint_count": 8,
+    "refined_switch_breakpoint_count": 8,
+    "refined_right_breakpoint_count": 8,
+    "refined_window_fraction_of_coarse_element": 0.5
+  },
+  "output": {
+    "figure_pdf": "paper_figures/figure_04_temporal_refinement.pdf"
+  }
+}
